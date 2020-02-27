@@ -1,0 +1,121 @@
+<html>
+{% load static %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="modal fade" id="myModal" style="margin-top:150px;" role="dialog">
+        <div class="modal-dialog modal-lg">
+        
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">Your Details</h4>
+            </div>
+            <div class="modal-body">
+            Unique Code : <input type="text" id="uc" class="form-control"><br>
+            </div>
+            <div class="modal-footer">
+            <button type="button" id="start" class="btn btn-default" >Start Exam</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <script>
+        
+        $("#start").click(function(){
+            uc = $("#uc").val();
+            console.log(uc);
+           $.ajax({
+        url: "/start-exam/",
+        data : {
+            "uc" : uc
+        },
+        success: function (result) {
+            $('#myModal').modal('toggle');
+        }
+    });
+            
+        });
+    </script>
+    <div class="window">
+        <div class="window-header">
+            <div class="action-buttons"></div>
+            <select class="language">
+                <option value="PYTHON3" selected>PYTHON3</option>
+                <option value="C">C</option>
+                <option value="CPP">CPP</option>
+                <option value="JAVA">JAVA</option>
+            </select>
+        </div>
+        <div class="window-body">
+            <textarea class="code-input"></textarea>
+        </div>
+        <h3>Input</h3>
+        <input type="text" id="input" style="background-color: white;width:100%;height: 10%;">
+        <h3>Output</h3>
+        <style>
+            .loader {
+                border: 16px solid #f3f3f3; /* Light grey */
+                border-top: 16px solid #3498db; /* Blue */
+                border-radius: 50%;
+                width: 120px;
+                height: 120px;
+                animation: spin 2s linear infinite;
+                }
+
+                @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+                }
+        </style>
+        <div class="" id="loader"></div>
+        <pre class="code-output">
+            <h3 id="temp"></h3>
+        </pre>
+    </div>
+    <button class="offset" id="compile" style="width: 100%;height: 5%;background-color: #19bc8b;">Compile & Run</button>
+    <button class="offset" id="submit" style="width: 100%;height: 5%;background-color: #19bc8b;">Submit</button>
+</body>
+<script>
+    $("#compile").click(function () {
+        $("#loader").addClass("loader");
+        $.ajax({
+            url: "{% url 'compile' %}",
+            data: {
+                code: $("textarea.code-input").val(),
+                lang: $(".language").val(),
+                input: $("#input").val()
+            },
+            success: function (response) {
+                    $("#loader").removeClass("loader");
+                    $("#temp").html(response.output.compile_status);
+                    $("#temp").html(response.output.run_status.output_html);
+            }
+        });
+    });
+    
+    $("#submit").click(function () {
+        $.ajax({
+            url: "{% url 'submit' %}",
+            data: {
+                code: $("textarea.code-input").val(),
+            },
+            success: function (response) {
+                    alert('exam submitted');
+                    window.location = "{% url 'editor' %}";
+            }
+        });
+    });
+
+
+</script>
+<script>
+       $('#myModal').modal({ backdrop: 'static', keyboard: false });
+    </script>
+</html>

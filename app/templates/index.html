@@ -1,0 +1,74 @@
+
+<html>
+<head>
+{% load static %}
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Udayaan | Cosmos</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  {% comment %} <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script> {% endcomment %}
+</head>
+<body style="background-image:url('{% static 'bg.jpg' %}')">
+<div class="container" >
+  <center><h2>Programmer's Date</h2></center>
+  <table class="table table-light table-striped">
+    <thead>
+      <tr>
+      	<th></th>
+        <th>Sl.No</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Mark</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for problem in problems %}
+      <tr>
+      	<td id="{{problem.pk}}"><input class="inp" type="checkbox"></td>
+        <td>{{problem.sl}}</td>
+        <td>{{problem.title}}</td>
+        <td>{{problem.description}}</td>
+        <td>{{problem.mark}}</td>
+      </tr>
+      {% endfor %}
+      <tr>
+      <td colspan="5" align="center"><input type="text" id="player1" class="form-control" placeholder="Player 1 Name (Reg. no)"></td>
+      </tr>
+      <tr>
+      <td colspan="5" align="center"><input type="text" id="player2" class="form-control" placeholder="Player 2 Name (Reg. no)"></td>
+      </tr>
+      <tr>
+      <td colspan="5" align="center"><button id="start" class="btn btn-primary" style="width:100%;background-color:#bb1052;border-color:#bb1052;">Start</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+<script>
+  $("#start").click(function() {
+    $('.inp').each(function(index, item) {
+      player1 = $("#player1").val();
+      player2 = $("#player2").val();
+     if($(item).is(":checked")){
+       item = $(item).parent().attr('id');
+       $.ajax({
+              url: "/start/",
+              data: {
+                  "p1": player1,
+                  "p2" : player2,
+                  "id" : item
+              },
+              success: function (result) {
+                  alert('Your unique code is : '+result.uc);
+                  location.reload();
+              }
+          });
+     };
+  })
+  });
+</script>
+</html>
